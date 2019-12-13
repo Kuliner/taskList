@@ -2,12 +2,10 @@
 import React from 'react';
 import * as firebase from 'firebase';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import dotenv from 'dotenv';
 
 import Login from './components/Login';
 import Config from './Config';
 
-dotenv.config({ path: `/path/to/.env.${process.env.NODE_ENV}` });
 firebase.initializeApp(Config.firebaseConfig);
 
 function App() {

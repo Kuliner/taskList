@@ -1,3 +1,7 @@
+const dotenv = require('dotenv');
+
+dotenv.config({ path: `./enviroments/.env.${process.env.NODE_ENV}` });
+
 const config = {
   firebaseConfig: {
     apiKey: process.env.firebase.apiKey,

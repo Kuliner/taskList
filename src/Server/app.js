@@ -4,11 +4,22 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const { MongoClient } = require('mongodb');
+const config = require('./config');
 
 const indexRouter = require('./routes/index');
 const tasksRouter = require('./routes/tasks');
 
+
 const app = express();
+
+const client = new MongoClient(config.mongo.uri, { useNewUrlParser: true });
+
+client.connect(() => {
+  const collection = client.db(config.mongo.dbName).collection('Users');
+  console.log(collection);
+  client.close();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

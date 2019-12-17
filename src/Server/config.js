@@ -12,6 +12,6 @@ const config = {
   },
 };
 
-config.mongo.uri = `mongodb://${config.mongo.url}:27017`;
+config.mongo.uri = `mongodb+srv://${config.mongo.username}:${config.mongo.password}@${config.mongo.url}`;
 
 module.exports = config;

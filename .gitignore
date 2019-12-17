@@ -7,7 +7,7 @@
 /src/Server/data/
 /src/Server/build/
 /src/Server/.env-*
-
+/src/Server/.history
 /.pnp
 .pnp.js
 

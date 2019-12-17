@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const client = require('../lib/db');
 const config = require('../config');
 
@@ -11,14 +11,21 @@ router.get('/', (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-  const { login, password } = req.body;
-  const Users = client.db(config.mongo.dbName).collection('Users');
-  const user = await Users.findOne(req.query.login);
-  if (user) {
-    res.status(500).send('User exist.');
-  } else {
-    const hashedPassword = await bcrypt.hash(password);
-    await Users.insertOne({ login, password: hashedPassword });
+  try {
+    const { login, password } = req.body;
+    client.connect(async () => {
+      const Users = client.db(config.mongo.dbName).collection('Users');
+      const user = await Users.findOne(req.query.login);
+
+      if (user) {
+        res.status(500).send('User exist.');
+      } else {
+        const hashedPassword = await bcrypt.hash(password);
+        await Users.insertOne({ login, password: hashedPassword });
+      }
+    });
+  } catch (err) {
+    console.log(err);
   }
 });
 

@@ -6,4 +6,4 @@ const client = new MongoClient(config.mongo.uri, {
   useUnifiedTopology: true,
 });
 
-module.exports = client.db;
+module.exports = client;

@@ -5,32 +5,18 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-
-const config = require('./config');
-const client = require('./lib/db');
-
+const DbService = require('./lib/DbService');
 const indexRouter = require('./routes/index');
 const tasksRouter = require('./routes/tasks');
+const config = require('./config');
 
 const app = express();
+const dbService = new DbService(app, config);
+dbService.connect();
 
-passport.use(new LocalStrategy(
-  ((username, password, done) => {
-    client.connect(() => {
-      const Users = client.db(config.mongo.dbName).collection('Users');
+app.use(passport.initialize());
+app.use(passport.session());
 
-      Users.findOne({ username }, (err, user) => {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false); }
-        if (!user.verifyPassword(password)) { return done(null, false); }
-        return done(null, user);
-      });
-
-      client.close();
-    });
-  }),
-));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

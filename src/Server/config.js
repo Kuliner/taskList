@@ -1,14 +1,14 @@
 const dotenv = require('dotenv');
 const path = require('path');
 
-const enviroment = dotenv.config({ path: path.resolve(__dirname, `.env-${process.env.NODE_ENV}`) });
+const environment = dotenv.config({ path: path.resolve(__dirname, `.env-${process.env.NODE_ENV}`) });
 
 const config = {
   mongo: {
-    url: enviroment.parsed.mongo_url,
-    username: enviroment.parsed.mongo_username,
-    password: enviroment.parsed.mongo_password,
-    dbName: enviroment.parsed.mongo_dbName,
+    url: environment.parsed.mongo_url,
+    username: environment.parsed.mongo_username,
+    password: environment.parsed.mongo_password,
+    dbName: environment.parsed.mongo_dbName,
   },
 };
 

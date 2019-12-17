@@ -3,8 +3,10 @@
 # dependencies
 /node_modules
 /src/Client/node_modules/
-/src/Server/environments/*
 /src/Server/node_modules/
+/src/Server/data/
+/src/Server/build/
+/src/Server/.env-*
 
 /.pnp
 .pnp.js

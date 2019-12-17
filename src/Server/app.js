@@ -4,22 +4,33 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const { MongoClient } = require('mongodb');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
 const config = require('./config');
+const client = require('./lib/db');
 
 const indexRouter = require('./routes/index');
 const tasksRouter = require('./routes/tasks');
 
-
 const app = express();
 
-const client = new MongoClient(config.mongo.uri, { useNewUrlParser: true });
+passport.use(new LocalStrategy(
+  ((username, password, done) => {
+    client.connect(() => {
+      const Users = client.db(config.mongo.dbName).collection('Users');
 
-client.connect(() => {
-  const collection = client.db(config.mongo.dbName).collection('Users');
-  console.log(collection);
-  client.close();
-});
+      Users.findOne({ username }, (err, user) => {
+        if (err) { return done(err); }
+        if (!user) { return done(null, false); }
+        if (!user.verifyPassword(password)) { return done(null, false); }
+        return done(null, user);
+      });
+
+      client.close();
+    });
+  }),
+));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

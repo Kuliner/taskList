@@ -1,16 +1,17 @@
 const dotenv = require('dotenv');
+const path = require('path');
 
-dotenv.config({ path: `/environments/${process.env.NODE_ENV}.env` });
+const enviroment = dotenv.config({ path: path.resolve(__dirname, `.env-${process.env.NODE_ENV}`) });
 
 const config = {
   mongo: {
-    url: process.env.mongo.url,
-    username: process.env.mongo.username,
-    password: process.env.mongo.password,
-    dbName: process.env.mongo.dbName,
+    url: enviroment.parsed.mongo_url,
+    username: enviroment.parsed.mongo_username,
+    password: enviroment.parsed.mongo_password,
+    dbName: enviroment.parsed.mongo_dbName,
   },
 };
 
-config.mongo.uri = `mongodb+srv://${config.mongo.username}:${config.mongo.password}@${config.mongo.url}`;
+config.mongo.uri = `mongodb://${config.mongo.url}:27017`;
 
 module.exports = config;

@@ -4,11 +4,23 @@ class DbService {
   constructor(app, config) {
     this.app = app;
     this.config = config;
+    this.db = {};
 
-    this.connect.bind(this);
+    this.connect = this.connect.bind(this);
+    this.usersCollection = this.usersCollection.bind(this);
+    this.attachDbMiddleware = this.attachDbMiddleware.bind(this);
   }
 
-  connect() {
+  attachDbMiddleware(req, res, next) {
+    res.dbService = this;
+    next();
+  }
+
+  usersCollection() {
+    return this.db.collection('Users');
+  }
+
+  async connect() {
     const client = new MongoClient(this.config.mongo.uri,
       {
         useNewUrlParser: true,
@@ -16,11 +28,13 @@ class DbService {
         readPreference: 'secondary',
       });
 
-    client.connect((err, db) => {
-      if (err) console.log(err);
-      this.db = db;
-      console.log('connected');
-    });
+    this.db = (await client.connect()).db(this.config.mongo.dbName);
+    if (this.db) {
+      console.log('connected to mongoDb');
+    } else {
+      console.log('error connecting to mongoDb');
+      process.exit(1);
+    }
   }
 }
 

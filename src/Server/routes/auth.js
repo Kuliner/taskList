@@ -1,15 +1,15 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const client = require('../lib/DbService');
-const config = require('../config');
+const passport = require('passport');
 
 const router = express.Router();
 
-router.post('/register', async (req, res) => {
-  try {
-    const { login, password } = req.body;
-    client.connect(async () => {
-      const Users = client.db(config.mongo.dbName).collection('Users');
+router.post('/register',
+  async (req, res) => {
+    try {
+      const { login, password } = req.body;
+      const { dbService } = res;
+      const Users = dbService.usersCollection();
       const user = await Users.findOne({ login });
 
       if (user) {
@@ -17,12 +17,17 @@ router.post('/register', async (req, res) => {
       } else {
         const hashedPassword = await bcrypt.hash(password, 12);
         await Users.insertOne({ login, password: hashedPassword });
-        client.close();
-        res.status(200);
+        res.status(200).send('User inserted.');
       }
-    });
-  } catch (err) {
-    client.close();
-    res.status(500);
-  }
-});
+    } catch (err) {
+      res.status(500);
+    }
+  });
+
+router.post('/login',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  (req, res) => {
+    res.redirect('/');
+  });
+
+module.exports = router;

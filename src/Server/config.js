@@ -11,6 +11,7 @@ const config = {
   },
 };
 
-config.mongo.uri = `mongodb://${config.mongo.username}:${config.mongo.password}@${config.mongo.url}:27017`;
+if (process.env.NODE_ENV === 'development') config.mongo.uri = `mongodb://${config.mongo.username}:${config.mongo.password}@${config.mongo.url}:27017`;
+if (process.env.NODE_ENV === 'production') config.mongo.uri = `mongodb://${config.mongo.username}:${config.mongo.password}@${config.mongo.url}`;
 
 module.exports = config;

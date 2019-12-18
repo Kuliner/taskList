@@ -2,17 +2,16 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 
-const initializePassport = (dbService) => {
+const InitializePassport = (dbService) => {
   const verifyPassword = async (user, password) => bcrypt.compare(password, user.password);
 
   passport.serializeUser((user, done) => {
-    // eslint-disable-next-line no-underscore-dangle
-    done(null, user._id);
+    done(null, user.login);
   });
 
-  passport.deserializeUser((_id, done) => {
+  passport.deserializeUser((login, done) => {
     const Users = dbService.usersCollection();
-    Users.findOne({ _id }, (err, user) => {
+    Users.findOne({ login }, (err, user) => {
       done(err, user);
     });
   });
@@ -33,4 +32,4 @@ const initializePassport = (dbService) => {
   })));
 };
 
-module.exports = initializePassport;
+module.exports = InitializePassport;

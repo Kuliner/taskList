@@ -5,14 +5,21 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const passport = require('passport');
+const session = require('express-session');
 const DbService = require('./lib/DbService');
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const tasksRouter = require('./routes/tasks');
 const config = require('./config');
-const initializePassport = require('./lib/auth');
+const initializePassport = require('./lib/InitializePassport');
 
 const app = express();
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(session({ secret: 'cats' }));
 
 // db
 const dbService = new DbService(app, config);
@@ -27,11 +34,6 @@ app.use(passport.session());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 // routing
 app.use('/', indexRouter);

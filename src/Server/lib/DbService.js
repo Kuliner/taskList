@@ -20,6 +20,10 @@ class DbService {
     return this.db.collection('Users');
   }
 
+  taskCollection() {
+    return this.db.collection('Tasks');
+  }
+
   async connect() {
     const client = new MongoClient(this.config.mongo.uri,
       {
